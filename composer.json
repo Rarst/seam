@@ -1,0 +1,30 @@
+{
+    "name"        : "rarst/seam",
+    "description" : "Lightweight site renderer for Markdown content and Twig templates",
+    "keywords"    : ["silex", "markdown", "twig"],
+    "homepage"    : "https://bitbucket.org/Rarst/seam",
+    "license"     : "MIT",
+    "authors"     : [
+        {
+            "name"    : "Andrey Savchenko",
+            "email"   : "contact@rarst.net",
+            "homepage": "http://www.Rarst.net/"
+        }
+    ],
+    "support"     : {
+        "issues": "https://bitbucket.org/Rarst/seam/issues",
+        "source": "https://bitbucket.org/Rarst/seam/src"
+    },
+    "require"     : {
+        "php"                       : ">=5.4",
+        "chh/cache-service-provider": "~1.0",
+        "michelf/php-markdown"      : "~1.3",
+        "silex/silex"               : "~1.0",
+        "twig/twig"                 : "~1.12"
+    },
+    "autoload"    : {
+        "psr-0": {
+            "Rarst": "php/"
+        }
+    }
+}
