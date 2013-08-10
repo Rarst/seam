@@ -80,6 +80,16 @@ class Application extends \Silex\Application
             $app->abort(404);
         }
 
+        $response = new Response();
+        $response->setPublic();
+        $date = new \DateTime();
+        $date->setTimestamp($page_data['modified']);
+        $response->setLastModified($date);
+
+        if ($response->isNotModified($request)) {
+            return $response;
+        }
+
         $context = array_merge(
             $app->getDefaultContext(),
             array(
@@ -90,10 +100,10 @@ class Application extends \Silex\Application
         );
 
         if ($app['template.pjax'] && $request->headers->get('X-Pjax')) {
-            return $this->render($app['template.pjax'], $context);
+            return $this->render($app['template.pjax'], $context, $response);
         }
 
-        return $app->render($app['template.index'], $context);
+        return $app->render($app['template.index'], $context, $response);
     }
 
     public function parseFile($path)
