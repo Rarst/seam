@@ -2,7 +2,7 @@
     "name"        : "rarst/seam",
     "description" : "Lightweight site renderer for Markdown content and Twig templates",
     "keywords"    : ["silex", "markdown", "twig"],
-    "homepage"    : "https://bitbucket.org/Rarst/seam",
+    "homepage"    : "https://github.com/Rarst/seam",
     "license"     : "MIT",
     "authors"     : [
         {
@@ -12,8 +12,7 @@
         }
     ],
     "support"     : {
-        "issues": "https://bitbucket.org/Rarst/seam/issues",
-        "source": "https://bitbucket.org/Rarst/seam/src"
+        "issues": "https://github.com/Rarst/seam/issues"
     },
     "require"     : {
         "php"                       : ">=5.4",
