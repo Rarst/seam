@@ -22,8 +22,8 @@
         "twig/twig"                 : "~1.12"
     },
     "autoload"    : {
-        "psr-0": {
-            "Rarst": "php/"
+        "psr-4": {
+            "Rarst\\Seam\\": "php/"
         }
     }
 }
