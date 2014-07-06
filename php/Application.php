@@ -124,20 +124,20 @@ class Application extends \Silex\Application
         return call_user_func(array( $this['markdown.class'], 'defaultTransform' ), $markdown);
     }
 
-    public function handleError(HttpException $e, $code)
+    public function handleError(HttpException $exception, $code)
     {
         if ($this['debug']) {
             return null; // to get error message and stack trace rather than templated 404
         }
 
-        $page_data = $this->parseFile($this['content'] . '/404.md');
-        $content   = $this->fetchContent($page_data);
-        $context   = array_merge(
+        $page           = new Page('404', $this);
+        $page->title    = $code;
+        $page->subtitle = 'error';
+        $context        = array_merge(
             $this->getDefaultContext(),
             array(
-                'content'  => $content,
-                'title'    => $code,
-                'subtitle' => 'error',
+                'page'    => $page,
+                'content' => $this->fetchContent($page),
             )
         );
 
