@@ -93,8 +93,8 @@ class Application extends \Silex\Application
         $context = array_merge(
             $app->getDefaultContext(),
             array(
+                'page'          => $page_data,
                 'content'       => $app->fetchContent($page_data),
-                'meta'          => $page_data['meta'],
                 'is_front_page' => empty($page) && empty($name),
             )
         );
@@ -126,7 +126,7 @@ class Application extends \Silex\Application
             $content = substr($file_content, $comment_close + 3);
         }
 
-        return compact('meta', 'content', 'name', 'modified');
+        return array_merge( compact('content', 'name', 'modified'), $meta );
     }
 
     public function getDefaultContext()
