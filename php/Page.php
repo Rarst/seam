@@ -1,6 +1,8 @@
 <?php
 namespace Rarst\Seam;
 
+use Doctrine\Common\Cache\CacheProvider;
+
 class Page
 {
     protected $app;
@@ -8,7 +10,7 @@ class Page
     public $exists = false;
     public $name;
     public $modified;
-    public $content;
+    public $source;
 
     /**
      * @param Application $app
@@ -74,8 +76,8 @@ class Page
 
         if (0 === $commentOpen && $commentClose) {
 
-            $meta          = parse_ini_string(substr($fileContent, 4, $commentClose - 5));
-            $this->content = substr($fileContent, $commentClose + 3);
+            $meta         = parse_ini_string(substr($fileContent, 4, $commentClose - 5));
+            $this->source = substr($fileContent, $commentClose + 3);
         }
 
         foreach ($meta as $key => $value) {
@@ -84,4 +86,35 @@ class Page
 
         return true;
     }
-} 
+
+    public function getContent()
+    {
+        if (empty($this->app['cache.options'])) {
+            return $this->defaultTransform($this->source);
+        }
+
+        /** @var CacheProvider $cache */
+        $cache     = $this->app['cache'];
+        $key       = str_ireplace('/', '-', $this->name);
+        $cacheData = $cache->fetch($key);
+
+        if (empty($cacheData['content']) || $cacheData['modified'] != $this->modified) {
+            $content = $this->defaultTransform($this->source);
+            $cache->save($key, array( 'content' => $content, 'modified' => $this->modified ));
+        } else {
+            $content = $cacheData['content'];
+        }
+
+        return $content;
+    }
+
+    /**
+     * @param string $markdown
+     *
+     * @return string
+     */
+    public function defaultTransform($markdown)
+    {
+        return call_user_func(array( $this->app['markdown.class'], 'defaultTransform' ), $markdown);
+    }
+}

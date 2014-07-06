@@ -2,7 +2,6 @@
 namespace Rarst\Seam;
 
 use CHH\Silex\CacheServiceProvider;
-use Doctrine\Common\Cache\CacheProvider;
 use Silex\Application\TwigTrait;
 use Silex\Provider\TwigServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,7 +58,7 @@ class Application extends \Silex\Application
      */
     public function getResponse(Application $app, Request $request, $page)
     {
-        if (! $page->exists || empty($page->content)) {
+        if (! $page->exists || empty($page->source)) {
             $app->abort(404);
         }
 
@@ -77,7 +76,6 @@ class Application extends \Silex\Application
             $app->getDefaultContext(),
             array(
                 'page'          => $page,
-                'content'       => $app->fetchContent($page),
                 'is_front_page' => empty($page) && empty($name),
             )
         );
@@ -101,37 +99,6 @@ class Application extends \Silex\Application
         return $context;
     }
 
-    public function fetchContent($page)
-    {
-        if (empty($this['cache.options'])) {
-            return $this->defaultTransform($page->content);
-        }
-
-        /** @var CacheProvider $cache */
-        $cache      = $this['cache'];
-        $key        = str_ireplace('/', '-', $page->name);
-        $cache_data = $cache->fetch($key);
-
-        if (empty($cache_data['content']) || $cache_data['modified'] != $page->modified) {
-            $content = $this->defaultTransform($page->content);
-            $cache->save($key, array( 'content' => $content, 'modified' => $page->modified ));
-        } else {
-            $content = $cache_data['content'];
-        }
-
-        return $content;
-    }
-
-    /**
-     * @param string $markdown
-     *
-     * @return string
-     */
-    public function defaultTransform($markdown)
-    {
-        return call_user_func(array( $this['markdown.class'], 'defaultTransform' ), $markdown);
-    }
-
     public function handleError(HttpException $exception, $code)
     {
         if ($this['debug']) {
@@ -145,10 +112,7 @@ class Application extends \Silex\Application
         $page->subtitle = 'error';
         $context        = array_merge(
             $this->getDefaultContext(),
-            array(
-                'page'    => $page,
-                'content' => $this->fetchContent($page),
-            )
+            array( 'page' => $page, )
         );
 
         return $this->render('index.twig', $context);
