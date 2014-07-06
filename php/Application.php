@@ -27,15 +27,13 @@ class Application extends \Silex\Application
         $this->register(new TwigServiceProvider(), array( 'twig.path' => $this['theme'] ));
         $this->register(new CacheServiceProvider());
 
-        /** @noinspection PhpParamsInspection */
+        $pageConverter = function ($urlPath) {
+            return new Page($urlPath, $this);
+        };
+
         $this->get('{page}', array( $this, 'getResponse' ))
             ->assert('page', '.*')
-            ->convert(
-                'page',
-                function ($args) {
-                    return array_filter(explode('/', $args));
-                }
-            );
+            ->convert('page', $pageConverter);
 
         $this->error(array( $this, 'handleError' ));
 
@@ -47,43 +45,20 @@ class Application extends \Silex\Application
     /**
      * @param Application $app
      * @param Request     $request
-     * @param array       $page
+     * @param Page        $page
      *
      * @return Response
      */
     public function getResponse(Application $app, Request $request, $page)
     {
-        if (empty($page)) {
-            $page_data = $app->parseFile($app['content'] . '/index.md');
-        } else {
-            $name = array_pop($page);
-
-            // prevent technical 404.md from being treated as normal page
-            if (404 == $name && empty($page)) {
-                $app->abort(404);
-            }
-
-            $path  = $app['content'] . '/' . implode('/', $page) . '/' . $name;
-            $index = $path . '/index.md';
-            $file  = $path . '.md';
-
-            if (file_exists($index)) {
-                $page_data = $app->parseFile($index);
-            } elseif (file_exists($file)) {
-                $page_data = $app->parseFile($file);
-            } else {
-                $app->abort(404);
-            }
-        }
-
-        if (empty($page_data['content'])) {
+        if (! $page->exists || empty($page->content)) {
             $app->abort(404);
         }
 
         $response = new Response();
         $response->setPublic();
         $date = new \DateTime();
-        $date->setTimestamp($page_data['modified']);
+        $date->setTimestamp($page->modified);
         $response->setLastModified($date);
 
         if ($response->isNotModified($request)) {
@@ -93,8 +68,8 @@ class Application extends \Silex\Application
         $context = array_merge(
             $app->getDefaultContext(),
             array(
-                'page'          => $page_data,
-                'content'       => $app->fetchContent($page_data),
+                'page'          => $page,
+                'content'       => $app->fetchContent($page),
                 'is_front_page' => empty($page) && empty($name),
             )
         );
@@ -104,29 +79,6 @@ class Application extends \Silex\Application
         }
 
         return $app->render($app['template.index'], $context, $response);
-    }
-
-    public function parseFile($path)
-    {
-        if (! file_exists($path)) {
-            $this->abort(404);
-        }
-
-        $file_content  = file_get_contents($path);
-        $meta          = array();
-        $content       = $file_content;
-        $comment_open  = stripos($file_content, '<!--');
-        $comment_close = stripos($file_content, '-->');
-        $name          = trim(substr($path, strlen($this['content'])), '/');
-        $modified      = filemtime($path);
-
-        if (0 === $comment_open && $comment_close) {
-
-            $meta    = parse_ini_string(substr($file_content, 4, $comment_close - 5));
-            $content = substr($file_content, $comment_close + 3);
-        }
-
-        return array_merge( compact('content', 'name', 'modified'), $meta );
     }
 
     public function getDefaultContext()
@@ -141,20 +93,20 @@ class Application extends \Silex\Application
         return $context;
     }
 
-    public function fetchContent($page_data)
+    public function fetchContent($page)
     {
         if (empty($this['cache.options'])) {
-            return $this->defaultTransform($page_data['content']);
+            return $this->defaultTransform($page->content);
         }
 
         /** @var CacheProvider $cache */
         $cache      = $this['cache'];
-        $key        = str_ireplace('/', '-', $page_data['name']);
+        $key        = str_ireplace('/', '-', $page->name);
         $cache_data = $cache->fetch($key);
 
-        if (empty($cache_data['content']) || $cache_data['modified'] != $page_data['modified']) {
-            $content = $this->defaultTransform($page_data['content']);
-            $cache->save($key, array( 'content' => $content, 'modified' => $page_data['modified'] ));
+        if (empty($cache_data['content']) || $cache_data['modified'] != $page->modified) {
+            $content = $this->defaultTransform($page->content);
+            $cache->save($key, array( 'content' => $content, 'modified' => $page->modified ));
         } else {
             $content = $cache_data['content'];
         }
@@ -183,8 +135,9 @@ class Application extends \Silex\Application
         $context   = array_merge(
             $this->getDefaultContext(),
             array(
-                'content' => $content,
-                'meta'    => array( 'title' => $code, 'subtitle' => 'error' ),
+                'content'  => $content,
+                'title'    => $code,
+                'subtitle' => 'error',
             )
         );
 
