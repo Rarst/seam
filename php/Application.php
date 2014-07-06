@@ -27,8 +27,16 @@ class Application extends \Silex\Application
         $this->register(new TwigServiceProvider(), array( 'twig.path' => $this['theme'] ));
         $this->register(new CacheServiceProvider());
 
+        $this['page'] = function ($app) {
+            return new Page($app);
+        };
+
         $pageConverter = function ($urlPath) {
-            return new Page($urlPath, $this);
+            /** @var Page $page */
+            $page = $this['page'];
+            $page->setPath($urlPath);
+
+            return $page;
         };
 
         $this->get('{page}', array( $this, 'getResponse' ))
@@ -130,7 +138,9 @@ class Application extends \Silex\Application
             return null; // to get error message and stack trace rather than templated 404
         }
 
-        $page           = new Page('404', $this);
+        /** @var Page $page */
+        $page = $this['page'];
+        $page->setPath('404');
         $page->title    = $code;
         $page->subtitle = 'error';
         $context        = array_merge(

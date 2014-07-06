@@ -11,18 +11,28 @@ class Page
     public $content;
 
     /**
-     * @param string      $urlPath
      * @param Application $app
      */
-    public function __construct($urlPath, $app)
+    public function __construct($app)
     {
         $this->app = $app;
+    }
+
+    /**
+     * @param string $urlPath
+     *
+     * @return bool
+     */
+    public function setPath($urlPath)
+    {
         $pathParts = array_filter(explode('/', $urlPath));
         $path      = $this->getExistingPath($pathParts);
 
         if ($path) {
             $this->exists = $this->parseFile($path);
         }
+
+        return $this->exists;
     }
 
     public function getExistingPath($pathParts)
