@@ -76,7 +76,7 @@ class Application extends \Silex\Application
             $app->getDefaultContext(),
             array(
                 'page'          => $page,
-                'is_front_page' => empty($page) && empty($name),
+                'is_front_page' => 'index.md' === $page->name,
             )
         );
 
