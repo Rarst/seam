@@ -90,7 +90,7 @@ class Application extends \Silex\Application
     public function getDefaultContext()
     {
         /** @var Request $request */
-        $request = $this['request'];
+        $request = $this['request_stack']->getCurrentRequest();
         $context = array(
             'base_url'  => $request->getSchemeAndHttpHost(),
             'theme_url' => $request->getUriForPath('/' . $this['theme']),
