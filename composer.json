@@ -7,7 +7,6 @@
     "authors"     : [
         {
             "name"    : "Andrey Savchenko",
-            "email"   : "contact@rarst.net",
             "homepage": "http://www.Rarst.net/"
         }
     ],
@@ -15,11 +14,11 @@
         "issues": "https://github.com/Rarst/seam/issues"
     },
     "require"     : {
-        "php"                       : ">=5.4",
         "chh/cache-service-provider": "~1.0",
         "michelf/php-markdown"      : "~1.3",
         "silex/silex"               : "~1.0",
-        "twig/twig"                 : "~1.12"
+        "php"                       : "^7.0",
+        "twig/twig"                 : "^2.0"
     },
     "autoload"    : {
         "psr-4": {
