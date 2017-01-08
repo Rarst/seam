@@ -1,8 +1,9 @@
-# Description
+# Seam
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Rarst/seam/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Rarst/seam/?branch=master)
 
-Seam is lightweight site renderer for [Markdown](http://michelf.ca/projects/php-markdown/) content and [Twig](http://twig.sensiolabs.org/) templates. There isn't nearly enough "managing" going on to call it CMS, but one prone to hyperbole could.
+Seam is a lightweight site renderer for [Markdown](https://en.wikipedia.org/wiki/Markdown) content and [Twig](http://twig.sensiolabs.org/) templates. There isn’t nearly enough “managing” going on to call it CMS, but one prone to hyperbole could.
 
-It is mostly writing [Pico](http://pico.dev7studios.com/) from scratch and differently. Powered by [Silex](http://silex.sensiolabs.org/), [Composer](http://getcomposer.org/), [pjax](http://pjax.heroku.com/) and other buzzwords.
+It is mostly writing [Pico](http://picocms.org/) from scratch and differently. Powered by [Silex](http://silex.sensiolabs.org/), [Composer](http://getcomposer.org/), [pjax](http://pjax.heroku.com/), and other buzzwords.
 
 There are a lot of previously invented wheels like it. But this one is mine. 
 
