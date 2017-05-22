@@ -21,6 +21,7 @@ class Application extends \Silex\Application
         $this['content']        = 'content';
         $this['template.index'] = 'index.twig';
         $this['markdown.class'] = 'Michelf\MarkdownExtra';
+        $this['site_title']      = 'Seam';
 
         $this->register(new TwigServiceProvider(), array( 'twig.path' => $this['theme'] ));
         $this->register(new CacheServiceProvider());
