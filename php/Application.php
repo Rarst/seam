@@ -115,7 +115,7 @@ class Application extends \Silex\Application
         return $context;
     }
 
-    public function handleError(HttpException $exception, $code)
+    public function handleError(HttpException $exception, Request $request, $code)
     {
         if ($this['debug']) {
             return null; // to get error message and stack trace rather than templated 404
