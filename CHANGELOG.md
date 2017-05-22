@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## 0.3 - 2017-05-22
+
 ### Changed
  - Required Silex and Cache service versions to 2.0+. 
  - Required PHP version to 7.0+.
