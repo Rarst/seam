@@ -98,7 +98,7 @@ class Page
         $key       = str_ireplace('/', '-', $this->name);
         $cacheData = $cache->fetch($key);
 
-        if (empty($cacheData['content']) || $cacheData['modified'] != $this->modified) {
+        if (empty($cacheData['content']) || $cacheData['modified'] !== $this->modified) {
             $content = $this->defaultTransform($this->source);
             $cache->save($key, array( 'content' => $content, 'modified' => $this->modified ));
         } else {
