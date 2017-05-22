@@ -2,6 +2,8 @@
 namespace Rarst\Seam;
 
 use CHH\Silex\CacheServiceProvider;
+use Mni\FrontYAML\Bridge\Parsedown\ParsedownParser;
+use Mni\FrontYAML\Parser;
 use Silex\Application\TwigTrait;
 use Silex\Provider\TwigServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,11 +19,16 @@ class Application extends \Silex\Application
         parent::__construct();
 
         // paths relative to index.php
-        $this['theme']          = 'theme';
-        $this['content']        = 'content';
-        $this['template.index'] = 'index.twig';
-        $this['markdown.class'] = 'Michelf\MarkdownExtra';
+        $this['theme']           = 'theme';
+        $this['content']         = 'content';
+        $this['template.index']  = 'index.twig';
         $this['site_title']      = 'Seam';
+        $this['markdown.parser'] = function () {
+            return new ParsedownParser();
+        };
+        $this['parser']          = function (Application $app) {
+            return new Parser(null, $app['markdown.parser']);
+        };
 
         $this->register(new TwigServiceProvider(), array( 'twig.path' => $this['theme'] ));
         $this->register(new CacheServiceProvider());

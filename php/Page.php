@@ -2,6 +2,7 @@
 namespace Rarst\Seam;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Mni\FrontYAML\Parser;
 
 class Page
 {
@@ -68,21 +69,22 @@ class Page
         }
 
         $fileContent    = file_get_contents($path);
-        $meta           = array();
-        $commentOpen    = stripos($fileContent, '<!--');
-        $commentClose   = stripos($fileContent, '-->');
         $this->name     = trim(substr($path, strlen($this->app['content'])), '/');
         $this->modified = filemtime($path);
 
-        if (0 === $commentOpen && $commentClose) {
+        /** @var Parser $parser */
+        $parser   = $this->app['parser'];
+        $document = $parser->parse($fileContent, false);
+        $yaml     = $document->getYAML();
 
-            $meta         = parse_ini_string(substr($fileContent, 4, $commentClose - 5));
-            $this->source = substr($fileContent, $commentClose + 3);
+        if (is_array($yaml)) {
+
+            foreach ($yaml as $key => $value) {
+                $this->$key = $value;
+            }
         }
 
-        foreach ($meta as $key => $value) {
-            $this->$key = $value;
-        }
+        $this->source = $document->getContent();
 
         return true;
     }
@@ -115,6 +117,6 @@ class Page
      */
     public function defaultTransform($markdown)
     {
-        return call_user_func(array( $this->app['markdown.class'], 'defaultTransform' ), $markdown);
+        return $this->app['markdown.parser']->parse($markdown);
     }
 }
