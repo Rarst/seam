@@ -107,8 +107,9 @@ class Application extends \Silex\Application
         /** @var Request $request */
         $request = $this['request_stack']->getCurrentRequest();
         $context = array(
-            'base_url'  => $request->getSchemeAndHttpHost(),
-            'theme_url' => $request->getUriForPath('/' . $this['theme']),
+            'base_url'      => $request->getSchemeAndHttpHost(),
+            'theme_url'     => $request->getUriForPath('/' . $this['theme']),
+            'is_front_page' => false,
         );
 
         return $context;
