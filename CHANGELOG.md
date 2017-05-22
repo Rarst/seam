@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - Required Silex and Cache service versions to 2.0+. 
  - Required PHP version to 7.0+.
  - Required Twig version to 2.0+.
+ - Pjax no longer requires separate template.
 
 ## 0.2 - 2017-01-07
 

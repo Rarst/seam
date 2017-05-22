@@ -20,7 +20,6 @@ class Application extends \Silex\Application
         $this['theme']          = 'theme';
         $this['content']        = 'content';
         $this['template.index'] = 'index.twig';
-        $this['template.pjax']  = null;
         $this['markdown.class'] = 'Michelf\MarkdownExtra';
 
         $this->register(new TwigServiceProvider(), array( 'twig.path' => $this['theme'] ));
@@ -80,8 +79,16 @@ class Application extends \Silex\Application
             )
         );
 
-        if ($app['template.pjax'] && $request->headers->get('X-Pjax')) {
-            return $this->render($app['template.pjax'], $context, $response);
+        if ($request->headers->get('X-Pjax')) {
+
+            /** @var \Twig_Environment $twig */
+            $twig           = $app['twig'];
+            $template       = $twig->loadTemplate($app['template.index']);
+            $context['app'] = $app;
+            $title          = trim($template->renderBlock('title', $context));
+            $content        = trim($template->renderBlock('content', $context));
+
+            return $response->setContent($title . "\n" . $content);
         }
 
         return $app->render($app['template.index'], $context, $response);
