@@ -9,6 +9,6 @@ There are a lot of previously invented wheels like it. But this one is mine.
 
 # How to
 
-[Composer in WordPress](http://composer.rarst.net) is the one and only site this was made for. Looking at [source](https://github.com/Rarst/composer-in-wp) might or might not be helpful.
+[Composer in WordPress](http://composer.rarst.net) is the one and only site this was made for. And even that one now runs on Jekyll instead.
 
 Why would you even want to use this? Move along.
