@@ -1,5 +1,4 @@
 # Seam
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Rarst/seam/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Rarst/seam/?branch=master)
 
 Seam is a lightweight site renderer for [Markdown](https://en.wikipedia.org/wiki/Markdown) content and [Twig](http://twig.sensiolabs.org/) templates. There isn’t nearly enough “managing” going on to call it CMS, but one prone to hyperbole could.
 
